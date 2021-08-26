@@ -1,0 +1,136 @@
+﻿<Window x:Class="WpfApplication1.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WpfApplication1.ViewModels"
+        xmlns:local="clr-namespace:WpfApplication1.View"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:wpfApplication1="clr-namespace:WpfApplication1"
+        mc:Ignorable="d"
+        MinHeight="350"
+        MinWidth="600"
+        MaxHeight="3000"
+        MaxWidth="3000"
+        Height="350" 
+        Width="600"
+        Title="Main">
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:MainWindowViewModel}" x:Key="FirstTemplate">
+            <StackPanel>
+                <TextBlock Background="Aquamarine" Text="ПЕРВЫЙ ШАБЛОН" TextDecorations="UnderLine"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MainWindowViewModel}" x:Key="SecondTemplate">
+            <StackPanel>
+                <TextBlock Background="BurlyWood" Text="Второй ШАБЛОН" TextDecorations="UnderLine"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type system:String}" x:Key="ObservableListBox">
+            <TextBlock Text="{Binding }" Background="Bisque"></TextBlock>
+        </DataTemplate>
+        <!-- ______________________________________________________________________________ -->
+        <DataTemplate DataType="{x:Type vm:MainWindowViewModel}" x:Key="MainSecondTemplate">
+            <Grid>
+                <Button Command="{Binding SwithMainWindowTemplate1}" Height="50" Width="50" 
+                        Content="Back" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MainWindowViewModel}" x:Key="MainTemplate">
+             <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"></RowDefinition>
+            <RowDefinition Height="200*"></RowDefinition>
+            <RowDefinition Height="75"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" BorderBrush="Chocolate" BorderThickness="3" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <Grid Grid.Row="0" Height="75" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Height="70" Width="200" Background="Aquamarine" 
+                           Text="{Binding TimerValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <ContentControl Content="{Binding TestVM}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="ContentControl">
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Setter Property="ContentTemplate" Value="{StaticResource FirstTemplate}"/>
+                             <Style.Triggers>
+                                 <DataTrigger Binding="{Binding SomeProp}" Value="Template1">
+                                     <DataTrigger.Setters>
+                                         <Setter Property="ContentTemplate" Value="{StaticResource FirstTemplate}"/>
+                                     </DataTrigger.Setters>
+                                 </DataTrigger>
+                                 <DataTrigger Binding="{Binding SomeProp}" Value="Template2">
+                                     <DataTrigger.Setters>
+                                         <Setter Property="ContentTemplate" Value="{StaticResource SecondTemplate}"/>
+                                     </DataTrigger.Setters>
+                                 </DataTrigger>
+                             </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+                <TextBox Height="15" Width="90"
+                         Margin="0 0 10 0" 
+                         HorizontalAlignment="Right" 
+                         ToolTip="введите название задачи"
+                         Text=""/> 
+            </Grid>
+        </Border>
+        <Border Grid.Row="1" BorderBrush="DarkRed" BorderThickness="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TreeView ItemsSource="{Binding ListOne}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <ListBox ItemsSource="{Binding ListOne }" ItemTemplate="{StaticResource ObservableListBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Extended"/>
+            </Grid>
+        </Border>
+        <Border Grid.Row="2" Height="75" BorderBrush="IndianRed" BorderThickness="3" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <Grid Grid.Row="2">
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding AddElemCommand}" Height="20" Width="30" Margin="15 0 0 0" ToolTip="добавить задачу">+</Button>
+                    <Button Command="{Binding DelElemCommand}" Height="20" Width="30" ToolTip="удалить задачу">-</Button>
+                    <Button Command="{Binding SwithTemplate1}" Height="20" Width="30" Margin="15 0 0 0" Content="T1"/>
+                    <Button Command="{Binding SwithTemplate2}" Height="20" Width="30" Content="T2"/>
+                    <Button Command="{Binding SwithMainWindowTemplate2}" Height="20" Width="30" Margin="15 0 0 0" Content="Next"></Button>
+                </StackPanel>
+                <Image Source="C:\Users\davydov.sk\Desktop\load.png" Height="18" Width="18" RenderTransformOrigin="0.5,0.5" Margin="15 0 0 0 ">
+                    <Image.RenderTransform>
+                        <RotateTransform x:Name="Rotate" />
+                    </Image.RenderTransform>
+                    <Image.Triggers>
+                        <EventTrigger>
+                            <EventTrigger.RoutedEvent>Loaded</EventTrigger.RoutedEvent>
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation Storyboard.TargetName="Rotate" Storyboard.TargetProperty="Angle" By="360" Duration="0:0:5"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Image.Triggers>
+                </Image>
+            </Grid>
+        </Border>
+    </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <!--\______________________________________________________________________________/-->
+    <Grid >
+        <ContentControl Content="{Binding TestVM}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="MainContentControl">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Setter Property="ContentTemplate" Value="{StaticResource MainTemplate}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding WindowTemplate}" Value="Main">
+                            <DataTrigger.Setters>
+                                <Setter Property="ContentTemplate" Value="{StaticResource MainTemplate}"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding WindowTemplate}" Value="second">
+                            <DataTrigger.Setters>
+                                <Setter Property="ContentTemplate" Value="{StaticResource MainSecondTemplate}"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+    </Grid>
+</Window>
